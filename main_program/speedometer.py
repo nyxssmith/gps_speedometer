@@ -139,7 +139,34 @@ def init():
         gpsd.connect()
         set_status("gps connected")
         last_speed = 0
+
+        #go to 0, 180 and back twice
+
+        #to zero
         p.start(2.5)
+
+        #to 180
+        time.sleep(1)
+        pwm_set = set_pwm_from_degree(180)
+        set_pins(True)
+        # GPIO.output(servoPIN, True)
+        p.ChangeDutyCycle(pwm_set)
+        set_pins(False)
+        time.sleep(1)
+        #to zero
+        p.start(2.5)
+
+        # to 180
+        time.sleep(1)
+        pwm_set = set_pwm_from_degree(180)
+        set_pins(True)
+        # GPIO.output(servoPIN, True)
+        p.ChangeDutyCycle(pwm_set)
+        set_pins(False)
+        time.sleep(1)
+        # to zero
+        p.start(2.5)
+
         current_degree = 0
         current_pwm = 2.5
     except:
@@ -207,6 +234,7 @@ def main():
 
     last_speeds = []
     try:
+        set_status("main loop")
         while True:
             #get speed
             speed = get_speed()
