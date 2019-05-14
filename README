@@ -1,0 +1,2 @@
+GPS speedometer program
+controls servo motor to point to speed based on gps speed from gpsd
