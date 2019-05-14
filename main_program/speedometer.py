@@ -19,6 +19,11 @@ current_pwm = 2.5
 init_done = False
 
 
+def set_status(status):
+    with open("status.txt","w")as txt:
+        txt.write(str(status))
+        txt.close()
+
 # convert the d
 def set_pwm_from_degree(degree):
     """
@@ -124,17 +129,21 @@ def set_degree_from_speed(speed):
 
 #starts gpsd and set s vars
 def init():
+
+    set_status("starting init")
     global current_pwm, current_degree, last_speed,init_done
     if init_done:
         return
     try:
         print("Trying to connect to gpsd")
         gpsd.connect()
+        set_status("gps connected")
         last_speed = 0
         p.start(2.5)
         current_degree = 0
         current_pwm = 2.5
     except:
+        set_status("failed to connect to gps")
         print("Couldnt connect to gps, trying again in 1 second")
         time.sleep(1)
         init()
@@ -193,6 +202,7 @@ def set_pins(on):
 
 
 def main():
+    set_status("starting main program")
     global last_speed,current_degree
 
     last_speeds = []
@@ -235,3 +245,5 @@ def main():
 #run
 init()
 main()
+
+set_status("past main??? uh, shouldnt be here")
