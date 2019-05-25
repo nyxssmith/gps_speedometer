@@ -1,2 +1,11 @@
 GPS speedometer program
 controls servo motor to point to speed based on gps speed from gpsd
+
+
+Setup
+
+must have gpsd and android platform tools packages installed
+set this up on the device and android phone
+http://sharegps.jillybunch.com/auto-linux.html
+
+to run once for testing and not on deploy, use the share_gps.sh to start the process
