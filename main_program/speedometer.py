@@ -8,21 +8,22 @@ last_speed = -1
 servoPIN = 17
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(servoPIN, GPIO.OUT)
-#GPIO.setup(1, GPIO.OUT)
-#GPIO.setup(6, GPIO.OUT)
+# GPIO.setup(1, GPIO.OUT)
+# GPIO.setup(6, GPIO.OUT)
 
 p = GPIO.PWM(servoPIN, 50)  # GPIO 17 for PWM with 50Hz
 
-global current_pwm,init_done,current_degree
+global current_pwm, init_done, current_degree
 current_degree = 0
 current_pwm = 2.5
 init_done = False
 
 
 def set_status(status):
-    with open("status.txt","w")as txt:
+    with open("status.txt", "w")as txt:
         txt.write(str(status))
         txt.close()
+
 
 # convert the d
 def set_pwm_from_degree(degree):
@@ -32,13 +33,14 @@ def set_pwm_from_degree(degree):
     180 12.5
     """
     degree = float(degree)
-    #print(degree)
+    # print(degree)
 
     duty = degree / 18 + 2.5
 
-    #print("pwm out " + str(duty))
+    # print("pwm out " + str(duty))
 
     return duty
+
 
 # finds coset value of speed to list of speeds
 def find_closest_value(num, values):
@@ -109,43 +111,54 @@ def set_degree_from_speed(speed):
         if degree_to_speed[key] == closest_value:
             closest_key = key
             break
-    #gets the degree that the closest speed is at
-    print("speed", speed, "closest key is", closest_key)
+    # gets the degree that the closest speed is at
+    log("speed {} closest key is {}".format(speed, closest_key))
     speed_at_key = degree_to_speed[closest_key]
-    print("speed at that key is", speed_at_key)
-    #gets the dist away from the base speed for actual speed
+    log("speed at that key is {}".format(speed_at_key))
+    # gets the dist away from the base speed for actual speed
     dist_away = speed - speed_at_key
 
-    print("dist away", dist_away)
+    log("dist away {}".format(dist_away))
     if dist_away < 0:
         pass
-    #gets the multiper to use for degree modification
+    # gets the multiper to use for degree modification
     multiplier = degree_to_multiplier[closest_key]
-    #sets the degree to set to based on the distance speed is away from base/known speed and its multiper
+    # sets the degree to set to based on the distance speed is away from base/known speed and its multiper
     degree = closest_key + dist_away * multiplier
     # print("speed*1/.5944", speed * (1 / .594444444))
-    print("degree to set", degree)
+    log("degree to set {}".format( degree))
     return degree
 
-#starts gpsd and set s vars
-def init():
 
+def create_log():
+    with open("log.txt", "w") as l_t:
+        l_t.write("")
+
+
+def log(str_to_log):
+    with open("log.txt", "a") as l_t:
+        l_t.write(str_to_log)
+
+
+# starts gpsd and set s vars
+def init():
     set_status("starting init")
-    global current_pwm, current_degree, last_speed,init_done
+    create_log()
+    global current_pwm, current_degree, last_speed, init_done
     if init_done:
         return
     try:
-        print("Trying to connect to gpsd")
+        log("Trying to connect to gpsd")
         gpsd.connect()
         set_status("gps connected")
         last_speed = 0
 
-        #go to 0, 180 and back twice
+        # go to 0, 180 and back twice
 
-        #to zero
+        # to zero
         p.start(2.5)
 
-        #to 180
+        # to 180
         time.sleep(1)
         pwm_set = set_pwm_from_degree(180)
         set_pins(True)
@@ -153,7 +166,7 @@ def init():
         p.ChangeDutyCycle(pwm_set)
         set_pins(False)
         time.sleep(1)
-        #to zero
+        # to zero
         p.start(2.5)
 
         # to 180
@@ -171,15 +184,15 @@ def init():
         current_pwm = 2.5
     except:
         set_status("failed to connect to gps")
-        print("Couldnt connect to gps, trying again in 1 second")
+        log("Couldnt connect to gps, trying again in 1 second")
         time.sleep(1)
         init()
 
-
     init_done = True
-    print("Connected to gpsd and set speed to 0")
+    log("Connected to gpsd and set speed to 0")
 
-#gets the speed from gpsd as a float
+
+# gets the speed from gpsd as a float
 def get_speed():
     global last_speed
     try:
@@ -192,9 +205,10 @@ def get_speed():
 
     return speed
 
-#check that speed is at least 2 mph away from last speed
-def speed_far_enough_away(speed,last_speeds):
-    if abs(speed-last_speed) > 2.5:
+
+# check that speed is at least 2 mph away from last speed
+def speed_far_enough_away(speed, last_speeds):
+    if abs(speed - last_speed) > 2.5:
         return True
     """
     for l_speed in last_speeds:
@@ -203,74 +217,78 @@ def speed_far_enough_away(speed,last_speeds):
     """
     return False
 
-def add_to_last_speeds(speed,last_speeds):
-    if len(last_speeds) == 2:#number of last speeds to keep
+
+def add_to_last_speeds(speed, last_speeds):
+    if len(last_speeds) == 2:  # number of last speeds to keep
         last_speeds.pop()
         last_speeds.append(speed)
     else:
         last_speeds.append(speed)
     return last_speeds
 
+
 def degree_far_enough_away(degree):
-    degree_away = abs(current_degree-degree)
+    degree_away = abs(current_degree - degree)
     if degree_away >= 2:
         return True
     return False
 
+
 def set_pins(on):
     if on:
         GPIO.output(servoPIN, True)
-        #GPIO.output(1, True)
-        #GPIO.output(6, True)
+        # GPIO.output(1, True)
+        # GPIO.output(6, True)
     else:
         GPIO.output(servoPIN, False)
-        #GPIO.output(1, False)
-        #GPIO.output(6, False)
+        # GPIO.output(1, False)
+        # GPIO.output(6, False)
 
 
 def main():
     set_status("starting main program")
-    global last_speed,current_degree
+    global last_speed, current_degree
 
     last_speeds = []
     try:
         set_status("main loop")
         while True:
-            #get speed
+            # get speed
             speed = get_speed()
-            #if speed has changed by enough
-            if (speed != last_speed and speed_far_enough_away(speed,last_speeds) or (speed <1 and last_speed < 1)):
-                print("speed: " + str(speed))
-                print("last speed", last_speed)
+            # if speed has changed by enough
+            if (speed != last_speed and speed_far_enough_away(speed, last_speeds) or (speed < 1 and last_speed < 1)):
+                log("speed: {}".format(str(speed)))
+                log("last speed {}".format(last_speed))
 
                 print("speed different enough")
 
-                #get the degree to set
+                # get the degree to set
                 degree_to_set = set_degree_from_speed(speed)
                 if degree_far_enough_away(degree_to_set):
-                    #if the degree has changed enough
+                    # if the degree has changed enough
                     print("degree different enough")
                     current_degree = degree_to_set
-                    print("Changing speed to point to",speed)
+                    log("Changing speed to point to {}".format(speed))
                     pwm_set = set_pwm_from_degree(degree_to_set)
                     set_pins(True)
-                    #GPIO.output(servoPIN, True)
+                    # GPIO.output(servoPIN, True)
                     p.ChangeDutyCycle(pwm_set)
                     set_pins(False)
-                    #GPIO.output(servoPIN, False)
+                    # GPIO.output(servoPIN, False)
                     time.sleep(0.25)
-            #turn off servo pin
-            #GPIO.output(servoPIN, False)
+            # turn off servo pin
+            # GPIO.output(servoPIN, False)
             set_pins(False)
             time.sleep(0.25)
             last_speed = speed
-            last_speeds = add_to_last_speeds(speed,last_speeds)
+            last_speeds = add_to_last_speeds(speed, last_speeds)
 
     except KeyboardInterrupt:
         p.stop()
         GPIO.cleanup()
 
-#run
+
+# run
 init()
 main()
 
