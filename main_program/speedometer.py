@@ -201,6 +201,7 @@ def get_speed():
         speed = float(speed) * 2.237
         speed = round(speed)
     except:
+        log("failed to get speed, returning last speed")
         return last_speed
 
     return speed
