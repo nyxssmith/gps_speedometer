@@ -4,7 +4,6 @@ except:
     print("not running on pi")
     pass
 import time
-import threading
 import copy
 
 
@@ -24,17 +23,11 @@ class SetDegree:
         self.degree = float(0)
         self.last_degree = float(0)
         self.delay = 0.1
-
-        self.hold_thread = threading.Thread(target=self.hold)
-        self.hold_thread.start()
-
         return
 
-    def to(self, degree,pin_on=True,pin_off=True):
-        self.last_degree = copy.copy(self.degree)
-        self.degree = float(degree)
+    def to(self, degree, pin_on=True, pin_off=True):
         # print("degree set to {}".format(degree))
-        duty = degree / 18 + 2.5
+        duty = self.degree / 18 + 2.5
         try:
             if pin_on:
                 GPIO.output(self.pin_number, True)
@@ -44,17 +37,23 @@ class SetDegree:
         except:
             pass
         time.sleep(self.delay)
-        if self.last_degree != self.degree:
+        if int(self.last_degree) != int(self.degree):
             print("degree changed from {} to {}".format(self.last_degree, self.degree))
+            self.last_degree = copy.copy(self.degree)
 
     def hold(self):
         try:
             GPIO.output(self.pin_number, True)
         except:
             pass
-        #TODO maybe if turns off the pin output so it would set output to true and not back to false
-        while self.runningt:
-            self.to(self.degree,pin_on=False,pin_off=False)
+        # TODO maybe if turns off the pin output so it would set output to true and not back to false
+        while self.running:
+            self.to(self.degree, pin_on=False, pin_off=False)
+        return
+
+    def set_degree(self, degree):
+        self.last_degree = copy.copy(self.degree)
+        self.degree = float(degree)
         return
 
     def stop(self):
