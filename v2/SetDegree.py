@@ -27,15 +27,17 @@ class SetDegree:
 
         return
 
-    def to(self, degree):
+    def to(self, degree,pin_on=True,pin_off=True):
         self.last_degree = copy.copy(self.degree)
         self.degree = float(degree)
         # print("degree set to {}".format(degree))
         duty = degree / 18 + 2.5
         try:
-            GPIO.output(self.pin_number, True)
+            if pin_on:
+                GPIO.output(self.pin_number, True)
             self.pwn_pin.ChangeDutyCycle(duty)
-            GPIO.output(self.pin_number, False)
+            if pin_off:
+                GPIO.output(self.pin_number, False)
         except:
             pass
         time.sleep(self.delay)
@@ -43,7 +45,11 @@ class SetDegree:
             print("degree changed from {} to {}".format(self.last_degree, self.degree))
 
     def hold(self):
+        try:
+            GPIO.output(self.pin_number, True)
+        except:
+            pass
         #TODO maybe if turns off the pin output so it would set output to true and not back to false
         while 1:
-            self.to(self.degree)
+            self.to(self.degree,pin_on=False,pin_off=False)
         return
