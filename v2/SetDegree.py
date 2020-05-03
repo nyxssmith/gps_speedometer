@@ -43,6 +43,7 @@ class SetDegree:
             print("degree changed from {} to {}".format(self.last_degree, self.degree))
 
     def hold(self):
+        #TODO maybe if turns off the pin output so it would set output to true and not back to false
         while 1:
             self.to(self.degree)
         return
