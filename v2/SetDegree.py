@@ -1,6 +1,7 @@
 try:
     import RPi.GPIO as GPIO
 except:
+    print("not running on pi")
     pass
 import time
 import threading
@@ -10,12 +11,14 @@ import copy
 class SetDegree:
     def __init__(self, pin):
         self.pin_number = pin
+        self.running = True
 
         try:
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(self.pin_number, GPIO.OUT)
             self.pwn_pin = GPIO.PWM(pin, 50)  # GPIO 17 for PWM with 50Hz
         except:
+            print("not running on pi or failed to set mode of pin")
             pass
 
         self.degree = float(0)
@@ -50,6 +53,11 @@ class SetDegree:
         except:
             pass
         #TODO maybe if turns off the pin output so it would set output to true and not back to false
-        while 1:
+        while self.runningt:
             self.to(self.degree,pin_on=False,pin_off=False)
+        return
+
+    def stop(self):
+        self.running = False
+        self.hold_thread.join()
         return
