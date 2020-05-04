@@ -9,8 +9,11 @@ def degree_from_speed(speed):
     """
     y=110/177x+185/59
     """
+    #ignore speeds below 5 and above 110, dont care about speedo at those speeds
     if speed < 5:
         return 0
+    elif speed > 110:
+        return 110
     degree = (float(110)/float(117))*float(speed)+(float(185)/float(59))
     return degree
 
@@ -35,3 +38,6 @@ setdegree.hold()
 3.5 degree is 5 mph
 0 degree is 0 mph
 """
+
+#TODO make read from speed file?
+#TODO move all to v2 repo
