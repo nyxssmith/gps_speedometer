@@ -25,10 +25,22 @@ class SetDegree:
         self.last_degree = float(0)
         self.delay = 0.1
 
+    def get_pulsewidth_from_degree(self,degree):
+        """
+        500 is 0
+        2500 is 180
+
+        a\ =\ \frac{100}{9}b+500
+        """
+        pulsewidth = (float(100)/float(9))*float(degree) + float(500)
+
+        return pulsewidth
+
     def to(self, degree):
         # print("degree set to {}".format(degree))
+        pulsewidth = self.get_pulsewidth_from_degree(degree)
         try:
-            self.pi.set_servo_pulsewidth(self.pin_number, degree)
+            self.pi.set_servo_pulsewidth(self.pin_number, pulsewidth)
         except:
             print("failed to set servo to degree")
             pass
