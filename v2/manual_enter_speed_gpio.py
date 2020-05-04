@@ -5,15 +5,21 @@ import threading
 pin = 17
 setdegree = SetDegreePIGPIO.SetDegree(pin)
 
+def degree_from_speed(speed):
+    """
+    y=110/177x+185/59
+    """
+    degree = (float(110)/float(117))*float(speed)+(float(185)/float(59))
+    return degree
 
 def get_input():
     while 1:
-        a = input("enter a degree")
-        setdegree.set_degree(a)
+        a = input("enter a speed")
+        b = degree_from_speed(a)
+        setdegree.set_degree(b)
     setdegree.stop()
 
 setdegree.to(0)
-#TODO figure out why this isnt setting the pin
 input_thread = threading.Thread(target=get_input)
 input_thread.start()
 
