@@ -9,6 +9,8 @@ def degree_from_speed(speed):
     """
     y=110/177x+185/59
     """
+    if speed < 5:
+        return 0
     degree = (float(110)/float(117))*float(speed)+(float(185)/float(59))
     return degree
 
