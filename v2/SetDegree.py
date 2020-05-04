@@ -8,9 +8,11 @@ import copy
 
 
 class SetDegree:
+
     def __init__(self, pin):
         self.pin_number = pin
         self.running = True
+        #TODO make a cleanup method for multiple runs w/o reboot
 
         try:
             GPIO.setmode(GPIO.BCM)
@@ -23,7 +25,6 @@ class SetDegree:
         self.degree = float(0)
         self.last_degree = float(0)
         self.delay = 0.1
-        return
 
     def to(self, degree, pin_on=True, pin_off=True):
         # print("degree set to {}".format(degree))
@@ -35,6 +36,7 @@ class SetDegree:
             if pin_off:
                 GPIO.output(self.pin_number, False)
         except:
+            #TODO print if this fails
             pass
         time.sleep(self.delay)
         if int(self.last_degree) != int(self.degree):

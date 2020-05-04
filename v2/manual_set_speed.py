@@ -12,9 +12,9 @@ def get_input():
         setdegree.set_degree(a)
     setdegree.stop()
 
-
+print("im here")
 setdegree.to(1)
-
+#TODO figure out why this isnt setting the pin
 input_thread = threading.Thread(target=get_input)
 input_thread.start()
 
