@@ -1,9 +1,9 @@
-import SetDegreeGPIO
+import SetDegreePIGPIO
 
 import threading
 
 pin = 17
-setdegree = SetDegreeGPIO.SetDegree(pin)
+setdegree = SetDegreePIGPIO.SetDegree(pin)
 
 
 def get_input():
