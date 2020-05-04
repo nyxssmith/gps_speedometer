@@ -43,6 +43,7 @@ def send_pwm_to_servo(pwm, servo):
 
 # p.start(2.5) # Initialization
 #zero()
+servo.start(2.5) #init servo
 try:
     while True:
         # pwm_set = set_degree(raw_input("[enter a degree 0-180]"))
