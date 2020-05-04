@@ -30,6 +30,7 @@ def send_pwm_to_servo(pwm, servo):
     global last_pwm,current_pwm
     # if theres a change to the pwm
     if float(pwm) != float(last_pwm):
+        servo.start(pwm)
         print("sending pwm to servo old:new",current_pwm,pwm)
         last_pwm = copy.copy(current_pwm)
         current_pwm = pwm
@@ -37,6 +38,7 @@ def send_pwm_to_servo(pwm, servo):
         servo.ChangeDutyCycle(pwm)
         GPIO.output(servoPIN, False)
         time.sleep(0.1)
+    servo.stop()
 
 
 

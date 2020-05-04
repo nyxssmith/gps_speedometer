@@ -25,6 +25,7 @@ class SetDegree:
         self.degree = float(0)
         self.last_degree = float(0)
         self.delay = 0.1
+        self.pwn_pin.start(2.5)
 
     def to(self, degree, pin_on=True, pin_off=True):
         # print("degree set to {}".format(degree))
