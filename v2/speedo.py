@@ -1,6 +1,6 @@
 import SetDegreePIGPIO
 import gpsd
-
+import time
 import threading
 
 
@@ -27,6 +27,8 @@ def get_input():
 
 
 def get_speed():
+    fails_before_waggle = 100
+    fails = 0
     while 1:
         try:
             packet = gpsd.get_current()
@@ -36,7 +38,12 @@ def get_speed():
             degree = degree_from_speed(speed)
             setdegree.set_degree(degree)
         except:
-            pass
+            fails+=1
+        if fails > fails_before_waggle:
+            zero_to_hundred()
+            time.sleep(10)
+        else:
+            time.sleep(0.1)
 
 
 def zero_to_hundred():
@@ -58,7 +65,7 @@ if __name__ == "__main__":
 
     zero_to_hundred()
 
-    input_thread = threading.Thread(target=get_input)
+    input_thread = threading.Thread(target=get_speed)
     input_thread.start()
 
     setdegree.hold()
