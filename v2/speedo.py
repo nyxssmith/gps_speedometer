@@ -44,7 +44,7 @@ def get_speed():
         if fails > fails_before_waggle:
             zero_to_hundred()
             time.sleep(10)
-            fails-=900
+            fails=-900
         else:
             time.sleep(0.1)
 
