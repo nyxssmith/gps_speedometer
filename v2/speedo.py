@@ -35,13 +35,16 @@ def get_speed():
             speed = packet.speed()
             speed = float(speed) * 2.237
             speed = round(speed)
+            print("speed",speed)
             degree = degree_from_speed(speed)
             setdegree.set_degree(degree)
         except:
+            print("failed to get speed")
             fails+=1
         if fails > fails_before_waggle:
             zero_to_hundred()
             time.sleep(10)
+            fails-=900
         else:
             time.sleep(0.1)
 
