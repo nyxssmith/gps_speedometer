@@ -1,7 +1,31 @@
 import SetDegreePIGPIO
-import gpsd
+
+#import gpsd
+#import time
+#import threading
+
+import os
+from gps import *
+from time import *
 import time
 import threading
+
+gpsd = None #seting the global variable
+
+os.system('clear') #clear the terminal (optional)
+
+class GpsPoller(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+    global gpsd #bring it in scope
+    gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
+    self.current_value = None
+    self.running = True #setting the thread running to true
+
+  def run(self):
+    global gpsd
+    while gpsp.running:
+      gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
 
 def degree_from_speed(speed):
@@ -27,26 +51,19 @@ def get_input():
 
 
 def get_speed():
-    fails_before_waggle = 100
-    fails = 0
     while 1:
+        os.system('clear')
+        speed = gpsp.fix.speed
         try:
-            packet = gpsd.get_current()
-            speed = packet.speed()
-            speed = float(speed) * 2.237
-            speed = round(speed)
-            print("speed",speed)
-            degree = degree_from_speed(speed)
-            setdegree.set_degree(degree)
-        except Exception e::
-            print("failed to get speed",e)
-            fails+=1
-        if fails > fails_before_waggle:
-            zero_to_hundred()
-            time.sleep(10)
-            fails=-900
-        else:
-            time.sleep(0.1)
+            t = int(speed)
+        except:
+            speed = 0
+        speed = float(speed) * 2.237
+        speed = round(speed)
+        print("speed",speed)
+        degree = degree_from_speed(speed)
+        setdegree.set_degree(degree)
+       
 
 
 def zero_to_hundred():
@@ -63,15 +80,27 @@ def zero_to_hundred():
 if __name__ == "__main__":
     pin = 17
     setdegree = SetDegreePIGPIO.SetDegree(pin)
+    gpsp = GpsPoller()
+    gpsp.start()
+    try:
 
-    setdegree.to(0)
+        setdegree.to(0)
 
-    zero_to_hundred()
+        zero_to_hundred()
 
-    input_thread = threading.Thread(target=get_speed)
-    input_thread.start()
 
-    setdegree.hold()
+
+        input_thread = threading.Thread(target=get_speed)
+        input_thread.start()
+
+        setdegree.hold()
+        
+    except (KeyboardInterrupt, SystemExit):
+        print "\nKilling Thread..."
+        gpsp.running = False
+        gpsp.join()
+        input_thread.join()
+        
 
 """
 180 degrees is 115mph
