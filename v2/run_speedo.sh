@@ -7,4 +7,5 @@
 #dont forget to chmod +x it
 
 cd /home/pi/gps_speedometer/v2
-python3 run_forever.py speedo.py
+cp speedo.py temp.py
+python3 run_forever.py temp.py

@@ -38,8 +38,8 @@ def get_speed():
             print("speed",speed)
             degree = degree_from_speed(speed)
             setdegree.set_degree(degree)
-        except:
-            print("failed to get speed")
+        except Exception e::
+            print("failed to get speed",e)
             fails+=1
         if fails > fails_before_waggle:
             zero_to_hundred()
