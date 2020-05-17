@@ -57,6 +57,7 @@ def get_speed():
         try:
             t = int(speed)
         except:
+            print(speed)
             speed = 0
         speed = float(speed) * 2.237
         speed = round(speed)
@@ -69,13 +70,13 @@ def get_speed():
 def zero_to_hundred():
     d = degree_from_speed(0)
     setdegree.to(d)
-
+    time.sleep(1)
     d = degree_from_speed(100)
     setdegree.to(d)
-
+    time.sleep(1)
     d = degree_from_speed(0)
     setdegree.to(d)
-
+    time.sleep(1)
 
 if __name__ == "__main__":
     pin = 17
@@ -87,8 +88,6 @@ if __name__ == "__main__":
         setdegree.to(0)
 
         zero_to_hundred()
-
-
 
         input_thread = threading.Thread(target=get_speed)
         input_thread.start()
