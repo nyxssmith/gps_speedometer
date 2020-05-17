@@ -52,7 +52,7 @@ def get_input():
 
 def get_speed():
     while 1:
-        os.system('clear')
+        #os.system('clear')
         speed = gpsd.fix.speed
         try:
             t = int(speed)
@@ -61,7 +61,7 @@ def get_speed():
             speed = 0
         speed = float(speed) * 2.237
         speed = round(speed)
-        print("speed",speed)
+        #print("speed",speed)
         degree = degree_from_speed(speed)
         setdegree.set_degree(degree)
        
