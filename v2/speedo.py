@@ -51,6 +51,7 @@ def get_input():
 
 
 def get_speed():
+    last_speeds = [0,0,0,0,0]
     while 1:
         #os.system('clear')
         speed = gpsd.fix.speed
@@ -58,9 +59,13 @@ def get_speed():
             t = int(speed)
         except:
             print(speed)
-            speed = 0
+            speed = sum(last_speeds) / 5
+            #speed = 0
+            
         speed = float(speed) * 2.237
         speed = round(speed)
+        last_speeds.append(speed)
+        last_speeds.pop(0)
         #print("speed",speed)
         degree = degree_from_speed(speed)
         setdegree.set_degree(degree)
