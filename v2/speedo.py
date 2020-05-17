@@ -53,7 +53,7 @@ def get_input():
 def get_speed():
     while 1:
         os.system('clear')
-        speed = gpsp.fix.speed
+        speed = gpsd.fix.speed
         try:
             t = int(speed)
         except:
