@@ -51,7 +51,11 @@ def get_input():
 
 
 def get_speed():
-    last_speeds = [0,0,0,0,0]
+    #last_speeds = [0,0,0,0,0]
+    last_speeds = []
+    speed_limit = 50
+    for x in range(0,speed_limit):
+        last_speeds.append(0)
     while 1:
         #os.system('clear')
         speed = gpsd.fix.speed
@@ -59,7 +63,7 @@ def get_speed():
             t = int(speed)
         except:
             print(speed)
-            speed = sum(last_speeds) / 5
+            speed = sum(last_speeds) / speed_limit
             #speed = 0
             
         speed = float(speed) * 2.237
